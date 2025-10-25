@@ -1,0 +1,10 @@
+# VS Code
+.vscode/
+
+# Compiled files
+*.o
+*.exe
+*.out
+
+# Test files (你本地的测试文件)
+test_*.cpp
