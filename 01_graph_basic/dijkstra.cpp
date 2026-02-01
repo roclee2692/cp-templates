@@ -11,74 +11,62 @@
  * 
  * 模板题：洛谷 P3371 - 【模板】单源最短路径（弱化版）
  */
-
 #include <bits/stdc++.h>
 using namespace std;
+using ll=long long;
+using pll=pair<ll,ll>;
+const ll INF = 4e18;
+const int XN=1e6+7;
 
-typedef long long ll;
-typedef pair<ll, int> pli;  // (距离, 节点编号)
+vector<pll> adj[XN];
+ll dist[XN];
 
-const ll INF = 1e18;
+void dijkstra(ll start,ll n){
+    fill(dist,dist+n+1,INF);
+    dist[start]=0;
 
-vector<pair<int, ll>> graph[100005];  // graph[u] = {(v, w)}
-ll dist[100005];
-bool visited[100005];
+    priority_queue<pll,vector<pll>,greater<pll>> pq;
+    pq.push({0,start});
 
-void dijkstra(int start, int n) {
-    // 初始化
-    fill(dist, dist + n + 1, INF);
-    fill(visited, visited + n + 1, false);
-    dist[start] = 0;
-    
-    priority_queue<pli, vector<pli>, greater<pli>> pq;
-    pq.push({0, start});
-    
-    while (!pq.empty()) {
-        auto [d, u] = pq.top();
-        pq.pop();
-        
-        if (visited[u]) continue;
-        visited[u] = true;
-        
-        // 松弛操作
-        for (auto [v, w] : graph[u]) {
-            if (dist[u] + w < dist[v]) {
-                dist[v] = dist[u] + w;
-                pq.push({dist[v], v});
+    while(!pq.empty()){
+        auto p=pq.top(); pq.pop();
+        ll d=p.first, u=p.second;
+        if(d>dist[u]) continue;
+        for(auto &e:adj[u]){
+            ll v=e.first, w=e.second;
+ //松弛操作 给到 v 的距离“放松”一下，看看能不能再缩短一点，能就更新。
+//d 就是你当初 emplace(dist[u], u) 时，把当时 dist[u] 的值装到队列里的那个“快照
+// u之前也压入过不是最终最短路径的值 只有d==dist[u] 该值才是可用的
+            if(dist[u]+w<dist[v]){
+                dist[v]=dist[u]+w;
+                pq.emplace(dist[v],v);
+//min()会将每条边都往堆里压一次，即便它并没有“松弛”到更短的距离
             }
         }
     }
 }
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
-    int n, m, s;
-    cin >> n >> m >> s;
-    
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        ll w;
-        cin >> u >> v >> w;
-        graph[u].push_back({v, w});
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+
+    ll n,m,s;
+    cin>>n>>m>>s;
+    for(int i=0;i<m;i++){
+        ll u,v,w;
+        cin>>u>>v>>w;
+        adj[u].push_back({v,w});
     }
-    
-    dijkstra(s, n);
-    
-    for (int i = 1; i <= n; i++) {
-        cout << dist[i];
+    dijkstra(s,n);
+    for(int i=1;i<=n;i++){
+        if(dist[i]==INF) cout<<(1<<31)-1;
+        else  cout << dist[i];
         if (i < n) cout << " ";
     }
-    cout << "\n";
-    
     return 0;
 }
-
 /*
  * 【关键点】
  * 1. 使用优先队列优化：每次取距离最小的节点
- * 2. visited 数组避免重复处理同一节点
  * 3. 松弛操作：if (dist[u] + w < dist[v]) 更新
  * 4. 必须保证所有边权非负（否则用 SPFA）
  * 

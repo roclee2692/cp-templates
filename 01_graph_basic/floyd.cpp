@@ -15,68 +15,49 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-
-typedef long long ll;
-
-const ll INF = 1e18;
-
-ll dist[505][505];
-int n, m;
-
-void floyd() {
-    // k 是中间节点
-    for (int k = 1; k <= n; k++) {
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (dist[i][k] != INF && dist[k][j] != INF) {
-                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+using ll=long long;
+const ll INF=1e18;
+const int XN=1e3+7;
+ll dist[XN][XN];
+int n,m;
+void floyd(){
+    for(int k=1;k<=n;k++){
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=n;j++){
+                if(dist[k][i]!=INF && dist[i][j]!=INF){
+                    dist[k][j]=min(dist[k][j],dist[k][i]+dist[i][j]);
                 }
             }
         }
     }
 }
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
-    cin >> n >> m;
-    
-    // 初始化
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= n; j++) {
-            if (i == j) {
-                dist[i][j] = 0;
-            } else {
-                dist[i][j] = INF;
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    cin>>n>>m;
+    for(int i=1;i<=n;i++){    // 初始化
+        for(int j=1;j<=n;j++){
+            if(i==j){
+                dist[i][j]=0;
+            }else{
+                dist[i][j]=INF;
             }
         }
     }
-    
-    // 读入边
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        ll w;
-        cin >> u >> v >> w;
-        dist[u][v] = min(dist[u][v], w);  // 处理重边
+    for(int i=0;i<m;i++){    // 读入边 边的条数为m
+        ll u,v,w;
+        cin>>u>>v>>w;
+        dist[u][v]=min(dist[u][v],w);// 处理重边
     }
-    
     floyd();
-    
-    // 输出结果
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= n; j++) {
-            if (dist[i][j] == INF) {
-                cout << -1;  // 无通路
-            } else {
-                cout << dist[i][j];
-            }
-            if (j < n) cout << " ";
+    for(int i=1;i<=n;i++){
+        for(int j=1;j<=n;j++){
+            if(dist[i][j]==INF) cout<<-1;
+            else cout<<dist[i][j];
+            if(j<n) cout<<' ';
         }
-        cout << "\n";
-    }
-    
-    return 0;
+        cout<<"\n";  
+      }
+      return 0;
 }
 
 /*

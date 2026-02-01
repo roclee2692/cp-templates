@@ -11,82 +11,83 @@
  * 
  * 模板题：洛谷 P3366 - 【模板】最小生成树
  */
-
 #include <bits/stdc++.h>
 using namespace std;
-
 typedef long long ll;
-
-class DSU {
-public:
-    vector<int> parent;
-    
-    DSU(int n) : parent(n + 1) {
-        for (int i = 0; i <= n; i++) {
-            parent[i] = i;
-        }
+struct DSU{
+    vector<ll> p,r;//parent rank
+    DSU(ll n=0):p(n+1),r(n+1)
+    { iota(p.begin(),p.end(),0); };//注意这里括号内外都有分号 少了编辑器不一定能查出来
+    ll find(ll x){    // 找根节点（路径压缩）
+        if(p[x]!=x) p[x]=find(p[x]);
+        return p[x];
     }
-    
-    int find(int x) {
-        if (parent[x] != x) {
-            parent[x] = find(parent[x]);
-        }
-        return parent[x];
-    }
-    
-    bool unite(int x, int y) {
-        x = find(x);
-        y = find(y);
-        if (x == y) return false;
-        parent[x] = y;
-        return true;
+    // 合并两个集合（按秩合并）
+    bool unite(ll a,ll b){
+        a=find(a); b=find(b);
+        if(a==b) return 0;// 已在同一集合
+        if(r[a]<r[b]) swap(a,b);
+        p[b]=a;//指向大的
+        if(r[a]==r[b]) r[a]++;//还有相等的可能性 直接增加a树的秩
+        return 1;
     }
 };
-
-struct Edge {
-    ll w;
-    int u, v;
-    bool operator<(const Edge& other) const {
-        return w < other.w;
+struct Edge{
+    ll u,v,w;
+    bool operator<(Edge const& o)const{
+        return w<o.w;// 当调用 e1 < e2 时：实际调用 e1.operator<(e2)
     }
 };
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
-    int n, m;
-    cin >> n >> m;
-    
-    vector<Edge> edges(m);
-    for (int i = 0; i < m; i++) {
-        cin >> edges[i].u >> edges[i].v >> edges[i].w;
-    }
-    
-    // 按权值排序
-    sort(edges.begin(), edges.end());
-    
-    DSU dsu(n);
-    ll total = 0;
-    int cnt = 0;
-    
-    for (const auto& e : edges) {
-        if (dsu.unite(e.u, e.v)) {
-            total += e.w;
-            cnt++;
-            if (cnt == n - 1) break;  // 已加入 n-1 条边
+// Kruskal 最小生成树函数：
+// 参数：
+//   n   - 图的顶点数（编号从 1 到 n）
+//   E   - 输入的所有边列表
+//   mst - 存放生成树边的容器
+// 返回值：最小生成树的总权重
+ll n,m;
+vector<Edge> E;
+vector<Edge> mst;
+ll kruskal(bool mintree=1){//加边法
+     mst.clear();          // ← 保证干净
+    if(mintree)
+    sort(E.begin(),E.end());// 1. 按权重升序排序所有边
+    else sort(E.rbegin(),E.rend());// 降序 ⇒ 最大生成树
+     // 2. 初始化并查集
+     DSU dsu(n);
+     ll total=0;// MST 权重累加
+ // 3. 遍历每条边，若连接的两点不连通则合并并加入 MST
+    for(auto &e:E){
+        if(dsu.unite(e.u,e.v)){
+            total+=e.w;
+            mst.push_back(e);
+             // 若已选满 n-1 条边，可提前结束
+             if((ll)mst.size()==n-1) break;
         }
-    }
-    
-    if (cnt == n - 1) {
-        cout << total << "\n";
-    } else {
-        cout << "No MST\n";  // 无连通生成树
-    }
-    
-    return 0;
+    }   
+    return total;
 }
-
+int main(){
+ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>m;
+    E.reserve(m);
+    for(int i=0;i<m;i++){
+        ll u,v,w;
+        cin>>u>>v>>w;
+        E.push_back({u,v,w});
+    }
+    ll ans=kruskal();
+    // 输出构成 MST 的每条边
+    if(mst.size()==n-1){//可能少于n-1条边 无法输出
+        cout<<ans<<'\n';  // 连通，输出总权重
+        // 可选：输出每条边
+        // for (auto& e : mst) {
+        //     cout << e.u << " " << e.v << " " << e.w << "\n";
+        // }
+    }else{
+        cout<<"orz\n";  // 不连通
+    }
+  return 0;
+}
 /*
  * 【Kruskal 算法步骤】
  * 1. 将所有边按权值从小到大排序

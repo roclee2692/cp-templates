@@ -14,68 +14,48 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-
 typedef long long ll;
-
+using pll=pair<ll,ll>;
 const ll INF = 1e18;
-
-vector<pair<int, ll>> graph[100005];
-ll dist[100005];
-int cnt[100005];  // 入队次数，用于检测负环
-bool in_queue[100005];
-
-bool spfa(int start, int n) {
-    fill(dist, dist + n + 1, INF);
-    fill(cnt, cnt + n + 1, 0);
-    fill(in_queue, in_queue + n + 1, false);
-    
-    dist[start] = 0;
-    queue<int> q;
+const int XN=1e6+7;
+vector<pll> adj[XN];// inq[u] 标记 u 是否在队列中
+vector<ll> dist;// dist: 最短距离；cnt: 入队次数
+ll cnt[XN],inq[XN];//vector<ll> dist,cnt,inq;// ❌ 没有分配大小 初始化不完整
+bool spfa(int start,int n){
+    dist.assign(n+1,INF);
+    dist[start]=0;
+    queue<ll> q;
     q.push(start);
-    in_queue[start] = true;
-    cnt[start] = 1;
-    
-    while (!q.empty()) {
-        int u = q.front();
-        q.pop();
-        in_queue[u] = false;
-        
-        for (auto [v, w] : graph[u]) {
-            if (dist[u] + w < dist[v]) {
-                dist[v] = dist[u] + w;
-                
-                if (!in_queue[v]) {
+    inq[start]=1;
+    cnt[start]++;
+    while(!q.empty()){
+        ll u=q.front(); q.pop();
+        inq[u]=0;
+        for(auto &e:adj[u]){
+            ll v=e.first,w=e.second;
+            if(dist[u]+w<dist[v]){
+                dist[v]=dist[u]+w;
+                if(!inq[v]){
                     q.push(v);
-                    in_queue[v] = true;
+                    inq[v]=1;
                     cnt[v]++;
-                    
-                    // 如果某个点入队超过 n-1 次，说明存在负环
-                    if (cnt[v] >= n) {
-                        return false;  // 存在负环
-                    }
+                    if(cnt[v]>=n) return 0;// 如果某个点入队超过 n-1 次，说明存在负环
                 }
             }
         }
     }
-    
-    return true;  // 不存在负环
+    return 1;// 不存在负环
 }
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
-    int n, m;
-    cin >> n >> m;
-    
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        ll w;
-        cin >> u >> v >> w;
-        graph[u].push_back({v, w});
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    ll n,m;
+    cin>>n>>m;
+    for(int i=0;i<m;i++){
+        ll u,v,w;
+         cin >> u >> v >> w;
+        adj[u].push_back({v, w});
     }
-    
-    if (!spfa(1, n)) {
+     if (!spfa(1, n)) {
         cout << "YES\n";  // 存在负环
     } else {
         cout << "NO\n";  // 不存在负环

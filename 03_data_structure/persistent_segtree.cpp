@@ -22,124 +22,283 @@ typedef long long ll;
 
 const int MAXN = 2e5 + 5;
 
+// ===== 核心数据结构：动态开点线段树节点 =====
+// 为什么不用数组？因为主席树会创建大量版本，静态数组会爆空间
+// 每个节点占用空间：12 字节（3 个 int）
 struct Node {
-    int ls, rs;
-    int cnt;
+    int ls, rs;  // 左右儿子的编号（不是指针，而是在 vector<Node> 中的下标）
+                 // 为什么用编号？因为 vector 动态扩容时地址会变，指针会失效
+    int cnt;     // 这个节点管辖的区间中有多少个数
+                 // 为什么存计数？用于查询区间第 k 小（二分思想）
 };
 
-vector<Node> tree;
-int root[MAXN];
-int n, m;
-vector<int> a;
-vector<int> sorted_a;
+// ===== 全局变量 =====
+vector<Node> tree;      // 存储所有节点（动态分配，避免空间浪费）
+int root[MAXN];         // root[i] 表示第 i 个版本的根节点编号
+                        // 核心思想：root[i] 保存了前 i 个元素的信息
+int n, m;               // n 个元素，m 个查询
+vector<int> a;          // 原始数组（1-indexed）
+vector<int> sorted_a;   // 离散化后的有序数组
+                        // 为什么要离散化？因为值域可能很大（1e9），但元素个数有限（n≤2e5）
 
+// ===== 动态创建新节点 =====
+// 为什么需要这个函数？主席树的核心是"复制+修改"，每次修改都要新建节点
+// 时间复杂度：O(1) 均摊
 int newNode() {
-    tree.push_back({0, 0, 0});
-    return tree.size() - 1;
+    tree.push_back({0, 0, 0});  // 创建一个空节点（左右儿子为 0，计数为 0）
+    return tree.size() - 1;      // 返回新节点的编号（就是 vector 的最后一个位置）
 }
 
+// ===== 可持久化插入：核心中的核心！=====
+// 参数：u - 旧版本的节点编号（会被修改为新版本）
+//      l, r - 当前节点管辖的区间
+//      pos - 要插入的位置（离散化后的坐标）
+//      val - 插入的值（一般是 +1，表示这个位置多了一个数）
+// 为什么要传引用 &u？因为要修改父节点的儿子指针指向新节点
 void insert(int &u, int l, int r, int pos, int val) {
-    int v = newNode();
-    tree[v] = tree[u];
-    tree[v].cnt += val;
-    u = v;
+    // ===== 步骤 1：创建新节点并复制旧节点信息 =====
+    // 为什么要复制？因为不能修改旧版本（可持久化的核心）
+    int v = newNode();      // 创建新节点 v
+    tree[v] = tree[u];      // 复制旧节点 u 的所有信息（ls, rs, cnt）
+    tree[v].cnt += val;     // 更新计数：这个区间多了 val 个数
+    u = v;                  // 让父节点指向新节点（通过引用修改）
     
-    if (l == r) return;
+    // ===== 步骤 2：如果到达叶子节点，停止递归 =====
+    if (l == r) return;     // 叶子节点：区间长度为 1，无需继续向下
     
+    // ===== 步骤 3：递归修改对应的子树（只修改一条路径）=====
+    // 为什么只修改一条路径？因为只插入一个元素，只影响 O(log n) 个节点
     int mid = (l + r) / 2;
     if (pos <= mid) {
+        // 如果插入位置在左半边，递归修改左子树
+        // 注意：tree[u].ls 是引用传递，会被修改为新的左子节点
         insert(tree[u].ls, l, mid, pos, val);
     } else {
+        // 否则递归修改右子树
         insert(tree[u].rs, mid + 1, r, pos, val);
     }
+    // 注意：另一半子树不修改，直接沿用旧版本的子树（路径压缩 + 共享结构）
 }
 
+// ===== 区间查询：查询某个版本中 [ql, qr] 区间有多少个数 =====
+// 参数：u - 当前版本的节点编号
+//      l, r - 当前节点管辖的区间
+//      ql, qr - 查询区间
+// 返回：[ql, qr] 中有多少个数
+// 为什么需要这个？用于验证或辅助查询
 int query(int u, int l, int r, int ql, int qr) {
-    if (ql > qr) return 0;
-    if (ql <= l && r <= qr) {
-        return tree[u].cnt;
+    if (ql > qr) return 0;           // 非法区间，返回 0
+    if (ql <= l && r <= qr) {        // 当前区间完全被查询区间包含
+        return tree[u].cnt;           // 直接返回计数
     }
     
+    // ===== 否则分段查询 =====
     int mid = (l + r) / 2;
     int res = 0;
-    if (ql <= mid) res += query(tree[u].ls, l, mid, ql, qr);
-    if (qr > mid) res += query(tree[u].rs, mid + 1, r, ql, qr);
+    if (ql <= mid) res += query(tree[u].ls, l, mid, ql, qr);     // 查询左半边
+    if (qr > mid) res += query(tree[u].rs, mid + 1, r, ql, qr);  // 查询右半边
     
     return res;
 }
 
-int kth(int u, int l, int r, int k) {
-    if (l == r) return l;
+// ===== 查询第 k 小：主席树最经典的应用！=====
+// 参数：u - 版本 r 的节点编号
+//      v - 版本 l-1 的节点编号
+//      l, r - 值域区间（离散化后的坐标范围）
+//      k - 要找第 k 小的数
+// 返回：第 k 小的数的离散化坐标
+// 核心思想：差分 + 二分查找
+int kth(int u, int v, int l, int r, int k) {
+    // ===== 边界：到达叶子节点 =====
+    if (l == r) return l;   // 叶子节点对应一个具体的值，直接返回其坐标
     
+    // ===== 二分决策：去左子树还是右子树？=====
     int mid = (l + r) / 2;
-    int left_cnt = tree[tree[u].ls].cnt;
     
+    // ===== 关键：计算区间 [l, r] 左半边有多少个数 =====
+    // 差分思想：tree[u].ls 是前 r 个元素的左子树
+    //          tree[v].ls 是前 (l-1) 个元素的左子树
+    //          两者相减就是区间 [l, r] 的左子树
+    int left_cnt = tree[tree[u].ls].cnt - tree[tree[v].ls].cnt;
+    
+    // ===== 核心判断：类似二分查找 =====
+    // 如果 k ≤ left_cnt，说明第 k 小在左半边
     if (k <= left_cnt) {
-        return kth(tree[u].ls, l, mid, k);
+        return kth(tree[u].ls, tree[v].ls, l, mid, k);  // 递归查询左子树（注意要传两个版本）
     } else {
-        return kth(tree[u].rs, mid + 1, r, k - left_cnt);
+        // 否则第 k 小在右半边，但要减去左边已经有的 left_cnt 个数
+        // 为什么减？因为右子树中的"第 1 小"实际上是整体的"第 (left_cnt+1) 小"
+        return kth(tree[u].rs, tree[v].rs, mid + 1, r, k - left_cnt);
     }
+    
+    // ===== 图解差分原理 =====
+    // 版本 0:    空树
+    // 版本 1:    插入 a[1]
+    // 版本 2:    插入 a[1], a[2]
+    // ...
+    // 版本 l-1:  插入 a[1..l-1]
+    // 版本 r:    插入 a[1..r]
+    //
+    // 差分：版本 r - 版本 l-1 = a[l..r] 的信息
+    // 每个节点的 cnt 都做差分，得到的就是区间 [l, r] 中每个值域的计数
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     
-    cin >> n >> m;
+    cin >> n >> m;  // n 个元素，m 个查询
     
-    a.resize(n + 1);
+    // ===== 步骤 1：读入数据并准备离散化 =====
+    a.resize(n + 1);  // 1-indexed
     for (int i = 1; i <= n; i++) {
         cin >> a[i];
-        sorted_a.push_back(a[i]);
+        sorted_a.push_back(a[i]);  // 收集所有值用于离散化
     }
     
-    sort(sorted_a.begin(), sorted_a.end());
-    sorted_a.erase(unique(sorted_a.begin(), sorted_a.end()), sorted_a.end());
+    // ===== 步骤 2：离散化（值域压缩）=====
+    // 为什么要离散化？因为值可能是 1e9，但只有 n≤2e5 个不同的值
+    // 例如：[1000000000, 3, 1000000001] → [2, 1, 3]（按大小关系映射到 1,2,3）
+    sort(sorted_a.begin(), sorted_a.end());  // 排序
+    sorted_a.erase(unique(sorted_a.begin(), sorted_a.end()), sorted_a.end());  // 去重
+    // 现在 sorted_a 是有序且不重复的，sorted_a[i] 就是第 i+1 小的值
     
-    tree.push_back({0, 0, 0});
-    root[0] = 0;
+    // ===== 步骤 3：初始化第 0 个版本（空版本）=====
+    tree.push_back({0, 0, 0});  // 编号 0 的节点是空节点（哨兵）
+    root[0] = 0;                // 第 0 个版本的根是空节点
     
+    // ===== 步骤 4：构建 n 个版本的主席树 =====
+    // 核心思想：root[i] 表示前 i 个元素构成的权值线段树
+    // 为什么是前缀？因为查询 [l, r] 可以用 root[r] - root[l-1] 差分得到
     for (int i = 1; i <= n; i++) {
-        root[i] = root[i - 1];
+        root[i] = root[i - 1];  // 从上一个版本复制（可持久化的起点）
+        
+        // 找到 a[i] 在离散化数组中的位置（1-indexed）
         int pos = lower_bound(sorted_a.begin(), sorted_a.end(), a[i]) - sorted_a.begin() + 1;
+// 假设 sorted_a（去重排序后）为：{10, 20, 30, 40, 50}
+// 我们要查 a[i] = 30 的排名。
+
+// lower_bound 在数组中二分查找 30。
+// 找到 30，返回指向 30 的迭代器。
+// 指向30的迭代器 - begin迭代器 = 2 （下标）。
+// 2 + 1 = 3。
+// 结论：30 是第 3 小的数，离散化后的值为 3。
+        // 插入 a[i]：在第 i 个版本中，pos 位置的计数 +1
+        // 注意：insert 会自动创建新版本（路径复制）
         insert(root[i], 1, sorted_a.size(), pos, 1);
     }
+    // 此时 root[1..n] 保存了所有版本
     
+    // ===== 步骤 5：处理查询 =====
     for (int i = 0; i < m; i++) {
         int l, r, k;
-        cin >> l >> r >> k;
+        cin >> l >> r >> k;  // 查询区间 [l, r] 的第 k 小
         
-        int u = root[r];
-        int v = root[l - 1];
+        // ===== 核心技巧：主席树差分 =====
+        // 问题：如何查询 [l, r] 的第 k 小？
+        // 答案：用前缀和思想！root[r] - root[l-1] 就是区间 [l, r] 的信息
+        // 
+        // 为什么可以差分？
+        // - root[r] 包含了前 r 个元素的所有信息
+        // - root[l-1] 包含了前 l-1 个元素的所有信息
+        // - 两者相减，得到的就是第 l 到第 r 个元素的信息
+        //
+        // 但是注意：这里的代码简化了，实际上应该在 kth 函数中传入两个树做差分
+        // 当前代码有 BUG：只用了 root[r]，没有减去 root[l-1]
         
-        // 差分：计算第 k 小
-        int pos = 1, len = sorted_a.size();
-        int d = 1, ans = 0;
+        int u = root[r];      // 前 r 个元素的树
+        int v = root[l - 1];  // 前 l-1 个元素的树
         
-        // 使用两个主席树差分查询
-        cout << sorted_a[kth(u, 1, len, k) - 1] << "\n";
+        // ===== 核心查询：利用差分找第 k 小 =====
+        // 传入两个版本 u 和 v，kth 函数内部会自动做差分
+        // 得到区间 [l, r] 中第 k 小的离散化坐标
+        int pos = kth(u, v, 1, sorted_a.size(), k);
+        
+        // 将离散化坐标转回原始值
+        // 注意：sorted_a 是 0-indexed，pos 是 1-indexed，所以要 -1
+        cout << sorted_a[pos - 1] << "\n";
     }
     
     return 0;
 }
 
 /*
- * 【关键点】
- * 1. Node 结构：ls, rs 子指针 + cnt 计数
- * 2. newNode：动态创建新节点
- * 3. insert：修改某个版本（复制+修改）
- * 4. root 数组：每个前缀对应一个根节点
- * 5. kth 查询：在差分树中找第 k 小
- * 6. 离散化：必要处理坐标值
+ * ========== 主席树核心总结 ==========
  * 
- * 【常见变体】
- * - 区间第 k 小
- * - 动态排名问题
- * - 持久化并查集
+ * 【什么是主席树？】
+ * - 学名：可持久化权值线段树（Persistent Segment Tree）
+ * - 别名：主席树（Chairman Tree，据说因发明者姓"朱"而得名）
+ * - 核心：保存历史版本的线段树，每次修改只新建 O(log n) 个节点
  * 
- * 【提交前检查】
- * ✓ 节点动态创建是否正确
- * ✓ root 数组是否初始化
- * ✓ 离散化坐标是否正确
- * ✓ kth 查询逻辑
+ * 【三大核心思想】
+ * 1. 可持久化：不直接修改旧版本，而是复制路径 + 修改节点
+ * 2. 前缀数组：root[i] 表示前 i 个元素的权值线段树
+ * 3. 差分查询：查询 [l, r] = root[r] - root[l-1]（类似前缀和）
+ * 
+ * 【为什么叫"权值"线段树？】
+ * - 普通线段树：下标表示位置，节点存储区间信息
+ * - 权值线段树：下标表示值域，节点存储这个值域有多少个数
+ * - 例如：[3, 1, 2] → 值域 1 有 1 个，值域 2 有 1 个，值域 3 有 1 个
+ * 
+ * 【空间复杂度分析】
+ * - 初始空树：O(1)（只有一个空节点）
+ * - 每次插入：新建 O(log n) 个节点（只复制修改路径）
+ * - n 次插入：O(n log n) 个节点
+ * - m 次查询：不增加节点
+ * - 总空间：O(n log n)，每个节点 12 字节
+ * 
+ * 【时间复杂度分析】
+ * - 单次插入：O(log n)（路径长度）
+ * - 单次查询：O(log n)（二分查找）
+ * - 总复杂度：O((n + q) log n)
+ * 
+ * 【为什么差分可以工作？】
+ * - root[r].cnt 表示前 r 个元素中，某个值域有多少个数
+ * - root[l-1].cnt 表示前 l-1 个元素中，某个值域有多少个数
+ * - 相减得到区间 [l, r] 中某个值域的计数
+ * - 递归到每个节点都做差分，就得到了区间 [l, r] 的完整信息
+ * 
+ * 【经典应用场景】
+ * 1. 静态区间第 k 小（最经典）
+ * 2. 主席树上二分（配合单调性）
+ * 3. 树上第 k 小（树链剖分 + 主席树）
+ * 4. 可持久化并查集
+ * 5. 可持久化数组
+ * 
+ * 【竞赛考察频率】
+ * - NOI/省选：⭐⭐⭐⭐（高频，属于必会）
+ * - ICPC/CCPC：⭐⭐⭐（偶尔，主要在区域赛及以上）
+ * - Codeforces：⭐⭐（Div1 E/F 可能出现）
+ * - 蓝桥杯：⭐（几乎不考）
+ * 
+ * 【与其他数据结构对比】
+ * - vs 普通线段树：可以查询历史版本，空间更大
+ * - vs 树状数组：功能更强，但代码更复杂
+ * - vs 平衡树：主席树更快（O(log n) vs O(log² n)），但不支持插入删除
+ * - vs 分块：主席树更稳定，分块常数更小
+ * 
+ * 【常见错误】
+ * 1. 忘记差分：只用 root[r]，没用 root[l-1]
+ * 2. 离散化错误：没去重或没排序
+ * 3. 节点编号混淆：用指针而不是编号（vector 扩容会失效）
+ * 4. 引用传递错误：insert 函数 u 必须是引用
+ * 5. 空间不足：tree.reserve() 预留空间避免多次扩容
+ * 
+ * 【提交前检查清单】
+ * ✓ 离散化：排序 + 去重 + lower_bound
+ * ✓ root[0] 初始化：空树（哨兵）
+ * ✓ insert 参数：&u 必须是引用
+ * ✓ kth 差分：传入 u 和 v 两个版本
+ * ✓ 坐标转换：离散化坐标 ↔ 原始值
+ * ✓ 边界情况：l=1 时 root[l-1]=root[0]
+ * 
+ * 【优化技巧】
+ * 1. tree.reserve(n * 40)：预留空间，避免频繁扩容
+ * 2. 路径压缩：未修改的子树直接沿用旧版本
+ * 3. 结构体对齐：Node 大小是 12 字节，已经很优了
+ * 
+ * 【调试技巧】
+ * 1. 打印 tree.size()：检查节点数是否合理（应该 ≈ n log n）
+ * 2. 打印 tree[u].cnt：检查计数是否正确
+ * 3. 小数据手模：n=3, a=[3,1,2]，手动模拟插入过程
  */
