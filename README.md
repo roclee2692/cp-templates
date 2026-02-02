@@ -1,77 +1,113 @@
 # CP Templates - 竞赛编程模板库
 
 > **不只是代码，更是完整的学习系统** - 42个核心模板 | 85%+竞赛覆盖率 | 每个算法配套模板题
+> 
+> **Not Just Code, But a Complete Learning System** - 42 Core Templates | 85%+ Competition Coverage | Every Algorithm with Practice Problems
 
 ---
 
-## ✨ 为什么选择这个库？（Why This Library?）
+## ✨ 为什么选择这个库？ | Why This Library?
 
 ### 🎓 **每个模板配套官方练习题 - 学完即可验证**
+### 🎓 **Every Template with Official Practice Problems - Learn and Verify Immediately**
+
+**中文 (Chinese):**
 - ✅ **42个算法，42道模板题**：每个都标注了洛谷/CF题号（如 Dijkstra → 洛谷 P3371）
 - 🔍 **一键搜索**：复制题号直接在平台找题
 - 💯 **即学即练**：看代码 → 理解注释 → 提交验证 → AC
 
+**English:**
+- ✅ **42 Algorithms, 42 Practice Problems**: Each labeled with Luogu/CF problem number (e.g., Dijkstra → Luogu P3371)
+- 🔍 **One-Click Search**: Copy problem number to find it directly on platform
+- 💯 **Learn-Practice-Verify**: Read code → Understand comments → Submit → AC
+
+---
+
 ### 📝 **每一行代码都经过人工理解 - 不是复制粘贴**
+### 📝 **Every Line Manually Understood - Not Copy-Paste**
 
-**与传统代码库的区别：**
+**与传统代码库的区别 | Comparison with Traditional Libraries:**
 
-| 传统代码库 ❌ | 本模板库 ✅ |
+| 传统代码库 ❌<br>Traditional Libraries | 本模板库 ✅<br>This Library |
 |-------------|------------|
-| 只有代码，没练习题 | **每个模板配套洛谷/CF题号** |
-| 不知道常见变体 | **详细说明3-5种变体及修改方法** |
-| 没有检查清单 | **提供提交前检查项，避免低级错误** |
-| 注释零散，看不懂 | **每一行都有详细注释和原理解释** |
-| 没有复杂度分析 | **开头结尾都有时间/空间复杂度** |
+| 只有代码，没练习题<br>Only code, no practice problems | **每个模板配套洛谷/CF题号**<br>**Every template with Luogu/CF problem numbers** |
+| 不知道常见变体<br>Unknown common variants | **详细说明3-5种变体及修改方法**<br>**Detail 3-5 variants and how to modify** |
+| 没有检查清单<br>No checklist | **提供提交前检查项，避免低级错误**<br>**Pre-submission checklist to avoid errors** |
+| 注释零散，看不懂<br>Sparse comments, hard to understand | **每一行都有详细注释和原理解释**<br>**Detailed comments and explanations for every line** |
+| 没有复杂度分析<br>No complexity analysis | **开头结尾都有时间/空间复杂度**<br>**Time/Space complexity at header and footer** |
 
-### 🔑 **每个文件都包含（What's Inside Each File）：**
+---
+
+### 🔑 **每个文件都包含 | What's Inside Each File:**
 
 ```cpp
 /* 
  * ✅ 算法名称 + 复杂度分析
+ * ✅ Algorithm Name + Complexity Analysis
+ * 
  * ✅ 模板题：洛谷 P3371 - 可直接搜索
+ * ✅ Practice Problem: Luogu P3371 - Searchable directly
+ * 
  * ✅ 竞赛考察频率：★★★★★
+ * ✅ Contest Frequency: ★★★★★
  */
 
 // ✅ 详细注释的核心代码
+// ✅ Core code with detailed comments
 
 /*
  * ✅ 【关键点】核心思想 + 易错点
+ * ✅ [Key Points] Core ideas + Common mistakes
+ * 
  * ✅ 【常见变体】90%的题目都是变形，告诉你怎么改
+ * ✅ [Common Variants] 90% of problems are variations, tells you how to modify
+ * 
  * ✅ 【提交前检查】避免 WA/RE 的检查清单
+ * ✅ [Pre-submission Checklist] Avoid WA/RE
  */
 ```
 
-**核心价值**：
-- 🔑 掌握算法本质，面试/考试快速回忆
-- 🔄 知道如何应对变体题（90%的题目都是模板变形）
-- ✅ 提高一次AC率，避免低级错误
+**核心价值 | Core Value:**
+- 🔑 掌握算法本质，面试/考试快速回忆 | Grasp algorithm essence, quick recall in interviews/contests
+- 🔄 知道如何应对变体题（90%的题目都是模板变形）| Know how to handle variants (90% of problems are template variations)
+- ✅ 提高一次AC率，避免低级错误 | Improve first-try AC rate, avoid silly mistakes
 
 ---
 
-## 📊 库概览（Library Stats）
+## 📊 库概览 | Library Stats
 
+**中文 (Chinese):**
 - **42 个核心模板** | 6 大模块 | 85%+ 竞赛考点覆盖
 - **人工审核**：每行代码都经过学习后理解才写入
 - **实战验证**：所有模板都在洛谷/CF上AC通过
 - **持续更新**：根据最新竞赛动态调整
 
+**English:**
+- **42 Core Templates** | 6 Major Modules | 85%+ Competition Coverage
+- **Manual Review**: Every line written only after personal understanding
+- **Practice-Verified**: All templates AC'd on Luogu/CF
+- **Continuously Updated**: Adjusted based on latest competition trends
+
 ---
 
-## Language / 语言
+## 📘 完整文档 | Full Documentation
 
-- 📘 **[中文完整版 (Chinese Full Guide)](README_CN.md)**
-- 📗 **[English Full Guide](README_EN.md)**
+- **[中文完整版 README_CN.md](README_CN.md)** - 详细学习路径、周计划、进度追踪
+- **[English Full Guide README_EN.md](README_EN.md)** - Detailed learning path, weekly plan, progress tracking
+- **[常见问题 FAQ.md](FAQ.md)** - Frequently Asked Questions
 
 ---
 
-## 📂 Contents / 内容
+## 📂 模板目录 | Template Contents
 
-- **01_graph_basic/** - 图论基础 (11 templates)
-- **02_string/** - 字符串算法 (8 templates)
-- **03_data_structure/** - 数据结构 (6 templates)
-- **04_number_theory/** - 数论 (6 templates)
-- **05_graph_advanced/** - 图论进阶 (5 templates)
-- **06_dynamic_programming/** - 动态规划 (6 templates)
+| 模块<br>Module | 文件夹<br>Folder | 模板数<br>Templates | 核心算法<br>Core Algorithms |
+|------|------|------|------|
+| 图论基础<br>Graph Basics | `01_graph_basic/` | 11 | Dijkstra, DSU, Kruskal, SPFA, Floyd |
+| 字符串<br>Strings | `02_string/` | 8 | KMP, Hash, Trie, AC Automaton |
+| 数据结构<br>Data Structures | `03_data_structure/` | 6 | BIT, Segment Tree, LCA, Persistent Segtree |
+| 数论<br>Number Theory | `04_number_theory/` | 6 | Fast Power, exGCD, CRT, Sieve, Lucas |
+| 图论进阶<br>Advanced Graph | `05_graph_advanced/` | 5 | Topo Sort, Tarjan, Dinic, MCMF |
+| 动态规划<br>Dynamic Programming | `06_dynamic_programming/` | 6 | Bitmask DP, Tree DP, Matrix Power DP |
 
 ---
 
