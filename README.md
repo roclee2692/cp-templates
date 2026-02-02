@@ -86,31 +86,67 @@ A curated competitive programming template library organized by 6-week sprint pl
 
 ---
 
-## 🚀 Get Started / 快速开始
+## 🚀 快速开始 | Get Started
+
+### 中文版 Quick Start 🇨🇳
 
 **立即开始学习：**
 
-1. 📘 阅读 [中文完整版](README_CN.md) 了解详细学习路径
-2. 📗 Read [English Guide](README_EN.md) for full learning path
-3. 💻 打开任意 `.cpp` 文件，查看详细注释
-4. 🎯 复制文件开头的模板题号（如 P3371），在洛谷提交验证
-5. 🔄 查看文件结尾的【常见变体】，学习如何应对变形题
+1. 📘 **阅读完整指南**：[中文完整版](README_CN.md) 了解详细学习路径
+2. 💻 **打开任意代码文件**：查看详细注释和算法原理
+3. 🎯 **复制模板题号**：文件开头有题号（如 P3371），直接在洛谷搜索
+4. ✅ **提交验证**：复制代码到洛谷/CF，确保理解正确
+5. 🔄 **学习变体**：查看文件结尾的【常见变体】，掌握应对变形题
 
 **推荐学习顺序：**
-- Week 1: `01_graph_basic/` (Dijkstra, DSU, Kruskal 必学)
-- Week 2: `02_string/` (KMP, Hash, Trie 高频)
-- Week 3: `03_data_structure/` (BIT, Segment Tree 核心工具)
-- Week 4-6: 数论 → 图论进阶 → DP
+- **第1周**: `01_graph_basic/` (Dijkstra, DSU, Kruskal 必学)
+- **第2周**: `02_string/` (KMP, Hash, Trie 高频考点)
+- **第3周**: `03_data_structure/` (BIT, Segment Tree 核心工具)
+- **第4-6周**: 数论 → 图论进阶 → DP
 
 ---
 
-## 💡 示例：如何使用模板（How to Use）
+### English Version Quick Start 🇺🇸
 
-1. **打开文件**：`01_graph_basic/dijkstra.cpp`
-2. **查看开头**：找到 `模板题：洛谷 P3371`
-3. **理解代码**：阅读详细注释，理解每一步
-4. **提交验证**：在洛谷搜索 P3371，提交代码验证
-5. **学习变体**：查看文件结尾的【常见变体】，学会如何修改
+**Start Learning Now:**
+
+1. 📗 **Read Full Guide**: [English Full Guide](README_EN.md) for detailed learning path
+2. 💻 **Open Any Code File**: Check detailed comments and algorithm principles
+3. 🎯 **Copy Problem Number**: Find problem number at file header (e.g., P3371), search on Luogu
+4. ✅ **Submit & Verify**: Copy code to Luogu/CF to ensure correct understanding
+5. 🔄 **Learn Variants**: Check [Common Variants] at file end to handle variations
+
+**Recommended Learning Order:**
+- **Week 1**: `01_graph_basic/` (Dijkstra, DSU, Kruskal - Must Know)
+- **Week 2**: `02_string/` (KMP, Hash, Trie - High Frequency)
+- **Week 3**: `03_data_structure/` (BIT, Segment Tree - Core Tools)
+- **Week 4-6**: Number Theory → Advanced Graph → DP
+
+---
+
+## 💡 使用示例 | Usage Example
+
+### 中文示例 🇨🇳
+
+**如何使用 Dijkstra 模板：**
+
+1. 打开文件：`01_graph_basic/dijkstra.cpp`
+2. 查看开头：找到 `模板题：洛谷 P3371`
+3. 理解代码：阅读详细注释，理解每一步原理
+4. 提交验证：在洛谷搜索 P3371，复制代码提交
+5. 学习变体：查看【常见变体】，学会记录路径、求次短路等
+
+---
+
+### English Example 🇺🇸
+
+**How to Use Dijkstra Template:**
+
+1. Open file: `01_graph_basic/dijkstra.cpp`
+2. Check header: Find `Practice Problem: Luogu P3371`
+3. Understand code: Read detailed comments to grasp each step
+4. Submit & verify: Search P3371 on Luogu, copy and submit code
+5. Learn variants: Check [Common Variants] to learn path recording, second shortest path, etc.
 
 ---
 
