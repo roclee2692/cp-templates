@@ -64,25 +64,14 @@
 
 ---
 
-## Quick Overview / 快速概览
+## 📂 Contents / 内容
 
-A curated competitive programming template library organized by 6-week sprint plan.
-
-一个精选的竞赛编程模板库，按 6 周冲刺计划组织。
-
-### 📂 Contents / 内容
 - **01_graph_basic/** - 图论基础 (11 templates)
 - **02_string/** - 字符串算法 (8 templates)
 - **03_data_structure/** - 数据结构 (6 templates)
 - **04_number_theory/** - 数论 (6 templates)
 - **05_graph_advanced/** - 图论进阶 (5 templates)
 - **06_dynamic_programming/** - 动态规划 (6 templates)
-- **FAQ.md** - 常见问题解答
-
-### 📄 Documentation / 文档
-- [README_CN.md](README_CN.md) - 完整中文学习指南（详细说明）
-- [README_EN.md](README_EN.md) - Complete English guide (Full details)
-- [FAQ.md](FAQ.md) - Frequently Asked Questions
 
 ---
 
