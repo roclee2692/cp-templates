@@ -13,6 +13,15 @@
 - 🔥 **High-Frequency First**: Every template is the **most frequently appearing** algorithm in real contests
 - 💡 **Not "big and complete", but "precise and accurate"**: Only keep implementations that **actually get tested**
 
+### 🎓 **Every Template Comes with Official Practice Problems - Learn and Verify Immediately**
+- ✅ **Bundled Practice Problems**: Each algorithm has corresponding **Luogu/Codeforces problem numbers**
+  - Example: Dijkstra → Luogu P3371, KMP → Luogu P3375
+- 🔍 **Quick Search**: Copy problem number to find it directly on platform
+- 💯 **Learn-Practice-Verify**: Read code → Understand comments → Submit problem → AC verification
+- 📈 **Progressive Learning**: Template problem → Variant problems → Comprehensive applications
+
+> **Benefits of this design**: No more "learned but don't know how to use" - every algorithm has a clear practice entry point!
+
 ### 📝 **Every Line Manually Reviewed - Comments You Can Actually Understand**
 
 Comparison with traditional code libraries:
@@ -20,10 +29,13 @@ Comparison with traditional code libraries:
 | Traditional Libraries | This Library ⭐ |
 |----------------------|-----------------|
 | Code copied from internet, sparse comments | **Every line personally understood and annotated by author** |
-| Only algorithm implementation, unclear principles | **Detailed comments on思路 and rationale for each step** |
-| No warnings on error-prone parts | **Clearly mark易错 points and precautions** |
+| Only algorithm implementation, unclear principles | **Detailed comments on rationale for each step** |
+| No warnings on error-prone parts | **Clearly mark common mistakes and precautions** |
 | No complexity analysis | **Time/Space complexity at beginning and end** |
 | Unknown competition focus | **Mark examination frequency in different contests** |
+| No practice problems | **Every template has Luogu/CF problem numbers** |
+| Unknown common variants | **Detail 3-5 common variants and how to modify** |
+| No checklist | **Provide pre-submission checklist to avoid errors** |
 | Abstract and hard to understand | **Use real examples to show code execution** |
 
 #### **Code Comment Structure (included in every file):**
@@ -36,7 +48,7 @@ Comparison with traditional code libraries:
  * Space Complexity: O(...)
  * 
  * Use Cases: When to use this algorithm
- * Practice Problem: Luogu/CF problem number
+ * Practice Problem: Luogu P3371 - [Template] Single Source Shortest Path  ← Bundled problem number, searchable
  * Contest Frequency: ★★★★☆ (Luogu/CF/Lanqiao appearance rate)
  */
 
@@ -44,20 +56,27 @@ Comparison with traditional code libraries:
 // Detailed comments on every step, explaining "why write this way"
 
 /*
- * [Key Points]
- * 1. Core idea
- * 2. Common mistakes
- * 3. Complexity analysis
+ * [Key Points] ← Core ideas and common mistakes
+ * 1. Core algorithm idea (e.g., Dijkstra's greedy strategy)
+ * 2. Common mistakes (e.g., negative weights cause errors)
+ * 3. Time complexity optimization techniques
  * 
- * [Common Variants]
- * - Variant 1: How to modify
- * - Variant 2: Special case handling
+ * [Common Variants] ← Real problem variations
+ * - Variant 1: Record path (how to backtrack shortest path)
+ * - Variant 2: Find second shortest path (modify relaxation condition)
+ * - Variant 3: Multi-source queries (call once per source)
  * 
- * [Pre-submission Checklist]
- * - [ ] Data range matches?
- * - [ ] Edge cases handled?
+ * [Pre-submission Checklist] ← Avoid runtime errors/WA
+ * - [ ] Data range matches? (int vs long long)
+ * - [ ] Edge cases handled? (n=0, n=1, etc.)
+ * - [ ] Initialization correct? (INF, dist array, etc.)
  */
 ```
+
+**Value of this extra information**:
+- 🔑 **Key Points**: Grasp algorithm essence, quick recall in interviews/contests
+- 🔄 **Common Variants**: 90% of problems are template variations, tells you how to modify
+- ✅ **Pre-submission Checklist**: Avoid silly mistakes, improve first-try AC rate
 
 ### 🛡️ **Quality Assurance**
 
